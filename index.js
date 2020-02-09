@@ -2,18 +2,35 @@ const express = require('express');
 const http = require('http');
 const socket = require('socket.io');
 
+const { Client } = require('pg');
+
 const app = express();
 const server = http.createServer(app);
+
 const io = socket(server);
-
 const path = require('path');
+
 const port = process.env.PORT || 5000;
-
 app.set('port', port);
-app.use('/public', express.static(path.join(__dirname, '/public')));
 
+app.use('/public', express.static(path.join(__dirname, '/public')));
 app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname, '/index.html'));
+});
+
+const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: true,
+});
+
+client.connect();
+
+client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+    if (err) throw err;
+    for (let row of res.rows) {
+        console.log(JSON.stringify(row));
+    }
+    client.end();
 });
 
 class Record {
