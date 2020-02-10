@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socket = require('socket.io');
 
-const { Client } = require('pg');
+const { Pool, Client } = require('pg');
 
 const app = express();
 const server = http.createServer(app);
@@ -23,10 +23,22 @@ const client = new Client({
     ssl: true,
 });
 
-client.connect();
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: true,
+});
 
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-    if (err) throw err;
+pool.query(
+    "INSERT INTO public.comments(parent_id, author, message) VALUES(0, 'Danil', 'Hello there!')",
+    (err, res) => {
+        console.log(err, res);
+        pool.end();
+    }
+);
+
+client.connect();
+client.query('SELECT * FROM public.comments', (err, res) => {
+    console.log(err);
     for (let row of res.rows) {
         console.log(JSON.stringify(row));
     }
