@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socket = require('socket.io');
 
-const { Pool } = require('pg');
+const { Client } = require('pg');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,22 +18,16 @@ app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname, '/index.html'));
 });
 
-const pool = new Pool({
+const client = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: true
+    ssl: true,
 });
 
-app.get('/db', async (req, res) => {
-    try {
-        const client = await pool.connect();
-        const result = await client.query('SELECT NOW()');
-        const results = { 'results': (result) ? result.rows : null};
-        console.log(results);
-        client.release();
-    } catch (err) {
-        console.error(err);
-        res.send("Error " + err);
-    }
+client.connect();
+client.query('SELECT NOW()', (err, res) => {
+    if (err) throw err;
+    console.log(res.rows);
+    client.end();
 });
 
 class Record {
