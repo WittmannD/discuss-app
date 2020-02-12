@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socket = require('socket.io');
 
-const { Pool, Client } = require('pg');
+const { Pool } = require('pg');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,31 +18,22 @@ app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname, '/index.html'));
 });
 
-const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: true,
-});
-
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: true,
+    ssl: true
 });
 
-pool.query(
-    "INSERT INTO public.comments(parent_id, author, message) VALUES(0, 'Danil', 'Hello there!')",
-    (err, res) => {
-        console.log(err, res);
-        pool.end();
+app.get('/db', async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const result = await client.query('SELECT NOW()');
+        const results = { 'results': (result) ? result.rows : null};
+        console.log(results);
+        client.release();
+    } catch (err) {
+        console.error(err);
+        res.send("Error " + err);
     }
-);
-
-client.connect();
-client.query('SELECT * FROM public.comments', (err, res) => {
-    console.log(err);
-    for (let row of res.rows) {
-        console.log(JSON.stringify(row));
-    }
-    client.end();
 });
 
 class Record {
@@ -89,21 +80,21 @@ io.sockets.on('connection', function(socket) {
         io.sockets.emit('comment', [record]);
     });
 });
-
-io.sockets.on('record', function(record) {
-    console.log(record);
-    recordsSystem.addRecord(record);
-    io.sockets.emit('comment', [record]);
-});
-
-io.sockets.on('updateRecord', function(record) {
-    recordsSystem.updateRecord(record);
-    io.sockets.emit('updateComment', record);
-});
-
-io.sockets.on('deleteRecord', function(record) {
-    recordsSystem.deleteRecord(record);
-});
+//
+// io.sockets.on('record', function(record) {
+//     console.log(record);
+//     recordsSystem.addRecord(record);
+//     io.sockets.emit('comment', [record]);
+// });
+//
+// io.sockets.on('updateRecord', function(record) {
+//     recordsSystem.updateRecord(record);
+//     io.sockets.emit('updateComment', record);
+// });
+//
+// io.sockets.on('deleteRecord', function(record) {
+//     recordsSystem.deleteRecord(record);
+// });
 
 server.listen(port, function() {
     console.log('listening on *:' + port);
