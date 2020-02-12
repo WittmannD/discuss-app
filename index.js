@@ -67,7 +67,7 @@ class RecordsSystem {
 const recordsSystem = new RecordsSystem();
 
 io.sockets.on('connection', function(socket) {
-    socket.emit('comment', [...recordsSystem.getAllRecords()]);
+    socket.emit('comment', recordsSystem.getAllRecords());
 
     socket.on('record', function(record) {
         recordsSystem.addRecord(record);
