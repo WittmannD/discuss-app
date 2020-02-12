@@ -14,16 +14,23 @@ const port = process.env.PORT || 5000;
 app.set('port', port);
 
 app.use('/public', express.static(path.join(__dirname, '/public')));
-app.get('/', function(request, response) {
-    response.sendFile(path.join(__dirname, '/index.html'));
-});
 
 const client = new Client({
     connectionString: process.env.DATABASE_URL,
     ssl: true,
 });
 
-client.connect();
+app.get('/', function(request, response) {
+    //response.sendFile(path.join(__dirname, '/index.html'));
+    client.connect();
+
+    client.query("SELECT * FROM comment_records", (err, res) => {
+        if (err) throw err;
+        response.send(res.rows);
+        client.end();
+    });
+
+});
 //client.query("INSERT INTO comment_records(comment_id, parent_id, author, message) VALUES(0, '{danja}', '{Hello there}')", (err, res) => {
 
 
