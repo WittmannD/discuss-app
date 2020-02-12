@@ -21,14 +21,8 @@ const client = new Client({
 });
 
 app.get('/', function(request, response) {
-    //response.sendFile(path.join(__dirname, '/index.html'));
-    client.connect();
+    response.sendFile(path.join(__dirname, '/index.html'));
 
-    client.query("SELECT * FROM comment_records", (err, res) => {
-        if (err) throw err;
-        response.send(res.rows);
-        client.end();
-    });
 
 });
 //client.query("INSERT INTO comment_records(comment_id, parent_id, author, message) VALUES(0, '{danja}', '{Hello there}')", (err, res) => {
@@ -51,11 +45,9 @@ class RecordsSystem {
     }
 
     getAllRecords() {
-        let records = [];
         client.query("SELECT * FROM comment_records", (err, res) => {
-            records = res.rows;
+            return res.rows;
         });
-        return records;
     }
 
     addRecord(data) {
