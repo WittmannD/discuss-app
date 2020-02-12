@@ -24,7 +24,7 @@ const client = new Client({
 });
 
 client.connect();
-client.query("INSERT INTO comments(parent_id, author, message) VALUES(0, '{danja}', '{Hello there}')", (err, res) => {
+client.query("INSERT INTO comments(comment_id, parent_id, author, message) VALUES(DEFAULT, 0, '{danja}', '{Hello there}')", (err, res) => {
     if (err) throw err;
     console.log(res.rows);
     client.end();
