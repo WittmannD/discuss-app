@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3d73e487-031a-4d69-8479-0e7babca8cc1" name="Default Changelist" comment="Updating">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
-    </list>
+    <list default="true" id="3d73e487-031a-4d69-8479-0e7babca8cc1" name="Default Changelist" comment="Updating" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +70,7 @@
       <workItem from="1581360746749" duration="5255000" />
       <workItem from="1581494639947" duration="1777000" />
       <workItem from="1581531963563" duration="3535000" />
-      <workItem from="1581538304601" duration="1654000" />
+      <workItem from="1581538304601" duration="1957000" />
     </task>
     <task id="LOCAL-00001" summary="Debugging">
       <created>1581283344665</created>

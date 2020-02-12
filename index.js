@@ -25,11 +25,7 @@ const client = new Client({
 
 client.connect();
 //client.query("INSERT INTO comment_records(comment_id, parent_id, author, message) VALUES(0, '{danja}', '{Hello there}')", (err, res) => {
-client.query("SELECT * FROM comment_records", (err, res) => {
-    if (err) throw err;
-    console.log(res.rows);
-    client.end();
-});
+
 
 class Record {
     constructor(data) {
@@ -48,7 +44,11 @@ class RecordsSystem {
     }
 
     getAllRecords() {
-        return this.records.values();
+        let records = [];
+        client.query("SELECT * FROM comment_records", (err, res) => {
+            records = res.rows;
+        });
+        return records;
     }
 
     addRecord(data) {

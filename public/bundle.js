@@ -9181,7 +9181,7 @@ class Comment {
 
         entity.id = commentData.id;
         createTime.innerText = commentData.createTime;
-        autor.innerText = commentData.autor;
+        autor.innerText = commentData.author;
         message.innerText = commentData.message;
 
         commentWrapper.appendChild(createTime);
