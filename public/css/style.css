@@ -1,0 +1,77 @@
+html {
+    font-family: 'Roboto', sans-serif;
+    color: #141614;
+}
+
+a {
+    color: inherit;
+}
+
+#commentWrapper div.comment, #commentWrapper div.comment-content {
+    padding-left: 30px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: inset 1px 0 0 rgba(255,255,255,0.2);
+}
+
+.comment {
+    /* margin: 30px 0; */
+    background: rgba(0,0,0,0.04);
+}
+
+.comment-form {
+    background: #e6f5f4;
+    border: 1px solid #b4c1c0;
+    padding: 5px;
+}
+
+.comment-form > div[contenteditable] {
+    padding: 3px 5px;
+    margin: 5px 0;
+    border: 1px solid #b7b7b7;
+    box-shadow: inset 1px 1px 0px rgba(0, 0, 0, 0.1);
+    background: #f9f9f9;
+    font-size: 14px;
+}
+
+.comment-form .form-author {
+    width: 200px;
+}
+
+.comment-content {
+    font-size: 14px;
+    padding: 20px 0;
+    position: relative;
+}
+
+.comment-content .comment-header {
+    align-items: baseline;
+    display: flex;
+    flex-direction: row;
+    font-size: 0.95em;
+}
+
+.comment-content .comment-header .author {
+    font-weight: bold;
+    margin: 0 15px 0 0;
+}
+
+.comment-content .comment-header .created-at {
+    color: #525252;
+}
+
+.comment-content .comment-footer {
+    font-size: 0.95em;
+    color: #292a29;
+}
+
+.comment-content:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 28px;
+    left: 0;
+    background: rgba(0, 0, 0, 0.1);
+    width: 16px;
+    height: 1px;
+    box-shadow: 0 -1px 0 rgba(255,255,255,0.2);
+}

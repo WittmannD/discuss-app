@@ -2230,6 +2230,38 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],6:[function(require,module,exports){
+function getTimeDifference(datetime) {
+    const diff = Date.now() - new Date(datetime);
+    const minutes = Math.floor(diff / 60000);
+    if (minutes <= 5) {
+        return 'just now';
+    }
+
+    const hours = Math.floor(minutes / 60);
+    if (hours <= 0) {
+        return `${Math.ceil(minutes / 5) * 5} minutes ago`;
+    }
+    if (hours < 24) {
+        return `${hours} hours ago`;
+    }
+
+    return `${Math.floor(hours / 24)} days ago`;
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
+function getUniqueId(length) {
+    return new Array(length).fill(0).map(t => { return getRandomInt(255).toString(16) }).join('');
+}
+
+module.exports = {
+    getTimeDifference,
+    getRandomInt,
+    getUniqueId
+};
+},{}],7:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -2259,7 +2291,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -2290,7 +2322,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -2377,7 +2409,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -2446,7 +2478,7 @@ Backoff.prototype.setJitter = function(jitter){
   };
 })();
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * Create a blob builder even when vendor prefixes exist
  */
@@ -2548,7 +2580,7 @@ module.exports = (function() {
   }
 })();
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -2573,7 +2605,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -2738,7 +2770,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -2746,7 +2778,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -2758,7 +2790,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":15,"engine.io-parser":26}],15:[function(require,module,exports){
+},{"./socket":16,"engine.io-parser":27}],16:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -3508,7 +3540,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
   return filteredUpgrades;
 };
 
-},{"./transport":16,"./transports/index":17,"component-emitter":12,"debug":23,"engine.io-parser":26,"indexof":31,"parseqs":33,"parseuri":34}],16:[function(require,module,exports){
+},{"./transport":17,"./transports/index":18,"component-emitter":13,"debug":24,"engine.io-parser":27,"indexof":32,"parseqs":34,"parseuri":35}],17:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -3671,7 +3703,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":12,"engine.io-parser":26}],17:[function(require,module,exports){
+},{"component-emitter":13,"engine.io-parser":27}],18:[function(require,module,exports){
 /**
  * Module dependencies
  */
@@ -3726,7 +3758,7 @@ function polling (opts) {
   }
 }
 
-},{"./polling-jsonp":18,"./polling-xhr":19,"./websocket":21,"xmlhttprequest-ssl":22}],18:[function(require,module,exports){
+},{"./polling-jsonp":19,"./polling-xhr":20,"./websocket":22,"xmlhttprequest-ssl":23}],19:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -3969,7 +4001,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":20,"component-inherit":13}],19:[function(require,module,exports){
+},{"./polling":21,"component-inherit":14}],20:[function(require,module,exports){
 /* global attachEvent */
 
 /**
@@ -4388,7 +4420,7 @@ function unloadHandler () {
   }
 }
 
-},{"./polling":20,"component-emitter":12,"component-inherit":13,"debug":23,"xmlhttprequest-ssl":22}],20:[function(require,module,exports){
+},{"./polling":21,"component-emitter":13,"component-inherit":14,"debug":24,"xmlhttprequest-ssl":23}],21:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -4635,7 +4667,7 @@ Polling.prototype.uri = function () {
   return schema + '://' + (ipv6 ? '[' + this.hostname + ']' : this.hostname) + port + this.path + query;
 };
 
-},{"../transport":16,"component-inherit":13,"debug":23,"engine.io-parser":26,"parseqs":33,"xmlhttprequest-ssl":22,"yeast":50}],21:[function(require,module,exports){
+},{"../transport":17,"component-inherit":14,"debug":24,"engine.io-parser":27,"parseqs":34,"xmlhttprequest-ssl":23,"yeast":51}],22:[function(require,module,exports){
 (function (Buffer){
 /**
  * Module dependencies.
@@ -4934,7 +4966,7 @@ WS.prototype.check = function () {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"../transport":16,"buffer":3,"component-inherit":13,"debug":23,"engine.io-parser":26,"parseqs":33,"ws":2,"yeast":50}],22:[function(require,module,exports){
+},{"../transport":17,"buffer":3,"component-inherit":14,"debug":24,"engine.io-parser":27,"parseqs":34,"ws":2,"yeast":51}],23:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 
 var hasCORS = require('has-cors');
@@ -4973,7 +5005,7 @@ module.exports = function (opts) {
   }
 };
 
-},{"has-cors":30}],23:[function(require,module,exports){
+},{"has-cors":31}],24:[function(require,module,exports){
 (function (process){
 /* eslint-env browser */
 
@@ -5241,7 +5273,7 @@ formatters.j = function (v) {
 };
 
 }).call(this,require('_process'))
-},{"./common":24,"_process":5}],24:[function(require,module,exports){
+},{"./common":25,"_process":5}],25:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -5509,7 +5541,7 @@ function setup(env) {
 
 module.exports = setup;
 
-},{"ms":25}],25:[function(require,module,exports){
+},{"ms":26}],26:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -5673,7 +5705,7 @@ function plural(ms, msAbs, n, name) {
   return Math.round(ms / n) + ' ' + name + (isPlural ? 's' : '');
 }
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -6280,7 +6312,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
   });
 };
 
-},{"./keys":27,"./utf8":28,"after":6,"arraybuffer.slice":7,"base64-arraybuffer":9,"blob":10,"has-binary2":29}],27:[function(require,module,exports){
+},{"./keys":28,"./utf8":29,"after":7,"arraybuffer.slice":8,"base64-arraybuffer":10,"blob":11,"has-binary2":30}],28:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -6301,7 +6333,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*! https://mths.be/utf8js v2.1.2 by @mathias */
 
 var stringFromCharCode = String.fromCharCode;
@@ -6513,7 +6545,7 @@ module.exports = {
 	decode: utf8decode
 };
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (Buffer){
 /* global Blob File */
 
@@ -6581,7 +6613,7 @@ function hasBinary (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":3,"isarray":32}],30:[function(require,module,exports){
+},{"buffer":3,"isarray":33}],31:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -6600,7 +6632,7 @@ try {
   module.exports = false;
 }
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -6611,14 +6643,14 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -6657,7 +6689,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -6698,7 +6730,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -6794,7 +6826,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":36,"./socket":38,"./url":39,"debug":40,"socket.io-parser":44}],36:[function(require,module,exports){
+},{"./manager":37,"./socket":39,"./url":40,"debug":41,"socket.io-parser":45}],37:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -7369,7 +7401,7 @@ Manager.prototype.onreconnect = function () {
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":37,"./socket":38,"backo2":8,"component-bind":11,"component-emitter":12,"debug":40,"engine.io-client":14,"indexof":31,"socket.io-parser":44}],37:[function(require,module,exports){
+},{"./on":38,"./socket":39,"backo2":9,"component-bind":12,"component-emitter":13,"debug":41,"engine.io-client":15,"indexof":32,"socket.io-parser":45}],38:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -7395,7 +7427,7 @@ function on (obj, ev, fn) {
   };
 }
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -7835,7 +7867,7 @@ Socket.prototype.binary = function (binary) {
   return this;
 };
 
-},{"./on":37,"component-bind":11,"component-emitter":12,"debug":40,"has-binary2":29,"parseqs":33,"socket.io-parser":44,"to-array":49}],39:[function(require,module,exports){
+},{"./on":38,"component-bind":12,"component-emitter":13,"debug":41,"has-binary2":30,"parseqs":34,"socket.io-parser":45,"to-array":50}],40:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -7912,13 +7944,13 @@ function url (uri, loc) {
   return obj;
 }
 
-},{"debug":40,"parseuri":34}],40:[function(require,module,exports){
-arguments[4][23][0].apply(exports,arguments)
-},{"./common":41,"_process":5,"dup":23}],41:[function(require,module,exports){
+},{"debug":41,"parseuri":35}],41:[function(require,module,exports){
 arguments[4][24][0].apply(exports,arguments)
-},{"dup":24,"ms":42}],42:[function(require,module,exports){
+},{"./common":42,"_process":5,"dup":24}],42:[function(require,module,exports){
 arguments[4][25][0].apply(exports,arguments)
-},{"dup":25}],43:[function(require,module,exports){
+},{"dup":25,"ms":43}],43:[function(require,module,exports){
+arguments[4][26][0].apply(exports,arguments)
+},{"dup":26}],44:[function(require,module,exports){
 /*global Blob,File*/
 
 /**
@@ -8061,7 +8093,7 @@ exports.removeBlobs = function(data, callback) {
   }
 };
 
-},{"./is-buffer":45,"isarray":32}],44:[function(require,module,exports){
+},{"./is-buffer":46,"isarray":33}],45:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -8478,7 +8510,7 @@ function error(msg) {
   };
 }
 
-},{"./binary":43,"./is-buffer":45,"component-emitter":12,"debug":46,"isarray":32}],45:[function(require,module,exports){
+},{"./binary":44,"./is-buffer":46,"component-emitter":13,"debug":47,"isarray":33}],46:[function(require,module,exports){
 (function (Buffer){
 
 module.exports = isBuf;
@@ -8502,7 +8534,7 @@ function isBuf(obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":3}],46:[function(require,module,exports){
+},{"buffer":3}],47:[function(require,module,exports){
 (function (process){
 /**
  * This is the web browser implementation of `debug()`.
@@ -8701,7 +8733,7 @@ function localstorage() {
 }
 
 }).call(this,require('_process'))
-},{"./debug":47,"_process":5}],47:[function(require,module,exports){
+},{"./debug":48,"_process":5}],48:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -8928,7 +8960,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":48}],48:[function(require,module,exports){
+},{"ms":49}],49:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -9082,7 +9114,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -9097,7 +9129,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'.split('')
@@ -9167,94 +9199,188 @@ yeast.encode = encode;
 yeast.decode = decode;
 module.exports = yeast;
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 const io = require('socket.io-client');
-const socket = io();
+const util = require('../lib/util');
 
 class Comment {
-    constructor(commentData) {
-        const entity = document.createElement('div');
-        const commentWrapper = document.createElement('div');
-        const createTime = document.createElement('span');
-        const autor = document.createElement('h3');
-        const message = document.createElement('div');
+    constructor(commentData, clientId) {
+        this.commentId = commentData.comment_id;
+        this.parentId = commentData.parent_id;
+        this.createdAt = commentData.created_at;
+        this.author = commentData.author;
+        this.message = commentData.message;
+        this.owner = commentData.owner;
 
-        entity.id = commentData.id;
-        createTime.innerText = commentData.createTime;
-        autor.innerText = commentData.author;
-        message.innerText = commentData.message;
+        const entry = `
+            <div class="comment-content">
+                <div class="comment-header">
+                    <p class="author">${this.author}</p>
+                    <span class="created-at">${util.getTimeDifference(this.createdAt)}</span>
+                </div>
+                <p class="message">${this.message}</p>
+                <div class="comment-footer">
+                    <a href="#" class="reply">reply</a>
+                    ${this.owner === clientId ? '<a href="#" class="edit">edit</a>' : ''}
+                    ${this.owner === clientId ? '<a href="#" class="delete">delete</a>' : ''}
+                </div>
+            </div>
+        `;
 
-        commentWrapper.appendChild(createTime);
-        commentWrapper.appendChild(autor);
-        commentWrapper.appendChild(message);
-        entity.appendChild(commentWrapper);
-
-        this.id = commentData.id;
-        this.entity = entity;
+        this.entity = document.createElement('div');
+        this.entity.className = 'comment';
+        this.entity.id = this.commentId;
+        this.entity.innerHTML = entry;
     }
-}
 
-class CommentsSystem {
-    constructor() {
-        this.comments = new Map();
-    }
-
-    add(comments) {
-        console.log(comments);
-        comments.forEach(commentData => {
-            const parentId = commentData.parent;
-            const wrapper = parentId ? this.comments.get(parentId).entity : document.querySelector('#commentWrapper');
-            const comment = new Comment(commentData);
-
-            wrapper.appendChild(comment.entity);
-            this.comments.set(commentData.id, comment);
-        })
+    remove() {
+        this.entity.parentNode.removeChild(this.entity);
     }
 }
 
 class CommentForm {
-    constructor(element) {
-        this.entity = element;
-
+    constructor(mode, socket, parentId=0) {
+        this.mode = mode;
+        this.socket = socket;
+        this.parentId = parentId;
         this.form = document.createElement('form');
-        this.autorField = document.createElement('input');
-        this.messageField = document.createElement('textarea');
-        this.submitButton = document.createElement('input');
-
-        this.autorField.setAttribute('name', 'author');
-        this.messageField.setAttribute('name', 'message');
-        this.submitButton.setAttribute('type', 'submit');
-
-        this.form.appendChild(this.autorField);
-        this.form.appendChild(this.messageField);
-        this.form.appendChild(this.submitButton);
-        this.entity.appendChild(this.form);
+        this.form.className = 'comment-form';
+        this.form.innerHTML = `
+            ${document.cookie}
+            ${mode !== 'editing' && '<div contenteditable="true" class="form-author"></div>'}
+            <div contenteditable="true" class="form-message"></div>
+            <button class="form-submit">Send</button> 
+            ${mode !== 'creating' && '<button class="form-reset">Reset</button>'}
+       `;
     }
 
     getFormData() {
-        console.log(new FormData(this.form));
         return ({
-            id: parseInt(Math.random() * 3000),
-            parent: 0,
-            createTime: Date.now(),
-            updateTime: 0,
-            autor: this.autorField.value,
-            message: this.messageField.value
+            parent_id: this.mode === 'replying' ? this.parentId : 0,
+            author: this.form.querySelector('.form-author').textContent,
+            message: this.form.querySelector('.form-message').textContent
         })
     }
 
-    submitHandler() {
-        socket.emit('record', this.getFormData());
+    remove() {
+        this.form.parentNode && this.form.parentNode.removeChild(this.form);
+    }
+
+    clear() {
+        this.form.querySelector('.form-message').textContent = '';
+    }
+
+    init(wrapper) {
+        this.form.querySelector('.form-submit').addEventListener('click', (e) => {
+            e.preventDefault();
+            switch (this.mode) {
+                case 'creating':
+                    this.socket.emit('record', this.getFormData());
+                    this.clear();
+                    break;
+
+                case 'replying':
+                    this.socket.emit('record', this.getFormData());
+                    this.remove();
+                    break;
+
+                case 'editing':
+                    this.socket.emit('updateRecord', this.getFormData());
+                    break;
+            }
+        });
+
+        const resetButton = this.form.querySelector('.form-reset');
+        resetButton && resetButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.clear();
+            this.remove();
+        });
+
+        wrapper.insertBefore(this.form, wrapper.children[1]);
+        this.form.querySelector('.form-message').focus();
+
+        return this;
+    }
+}
+
+class CommentsSystem {
+    constructor(data, socket) {
+        this.socket = socket;
+        this.data = data;
+        this.comments = new Map();
+        this.commentForm = new CommentForm('creating', socket).init(document.getElementById('commentForm'));
+        this.replyForm = null;
+        this.wrapper = document.querySelector('#commentWrapper');
+    }
+
+    addComment(comments) {
+        console.log(comments);
+        comments.forEach(commentData => {
+            const parentId = commentData.parent_id;
+            const wrapper = parentId ? this.comments.get(parentId).entity : this.wrapper;
+            const comment = new Comment(commentData, this.data.clientId);
+
+            wrapper.appendChild(comment.entity);
+            this.comments.set(commentData.comment_id, comment);
+
+            comment.entity.querySelector('a.reply').addEventListener('click', (e) => {
+                e.preventDefault();
+                this.replyClickHandler(commentData.comment_id);
+            });
+
+            if (this.data.clientId === commentData.owner) {
+
+                comment.entity.querySelector('a.delete').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.deleteClickHandler(commentData.comment_id);
+                });
+
+            }
+        })
+    }
+
+    deleteComment(comments) {
+        console.log(comments);
+        comments.forEach(({comment_id, ...tmp}) => {
+            this.comments.get(comment_id).remove();
+            this.comments.delete(comment_id);
+        })
+    }
+
+    replyClickHandler(commentId) {
+        const wrapper = this.comments.get(commentId).entity;
+        if (this.replyForm) {
+            this.replyForm.remove();
+        }
+        this.replyForm = new CommentForm('replying', this.socket, commentId).init(wrapper);
+    }
+
+    editClickHandler(commentId) {
+
+    }
+
+    deleteClickHandler(commentId) {
+        this.socket.emit('deleteRecord', commentId);
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const commentSystem = new CommentsSystem();
-    const commentForm = new CommentForm(document.getElementById('commentForm'));
-    commentForm.submitButton.addEventListener('click', commentForm.submitHandler.bind(commentForm));
+    const socket = io();
+    let commentSystem;
 
-    socket.on('comment', function (comment) {
-        commentSystem.add(comment);
+    socket.on('session start', function (data) {
+        commentSystem = new CommentsSystem(data, socket);
     });
+
+    socket.on('comment', function (comments) {
+        commentSystem.addComment(comments);
+    });
+
+    socket.on('deleteComment', function (comments) {
+        commentSystem.deleteComment(comments);
+    });
+
+    socket.on('error', () => {document.write('SOMETHING WENT WRONG')})
 });
-},{"socket.io-client":35}]},{},[51]);
+},{"../lib/util":6,"socket.io-client":36}]},{},[52]);
