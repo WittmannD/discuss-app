@@ -2,16 +2,15 @@
   "name": "discuss-app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cookie": "^0.4.0",
-    "cookie-parser": "^1.4.4",
     "cookie-session": "^1.4.0",
     "express": "^4.17.1",
     "pg": "^7.18.1",

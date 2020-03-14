@@ -2,17 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3d73e487-031a-4d69-8479-0e7babca8cc1" name="Default Changelist" comment="Updating">
-      <change afterPath="$PROJECT_DIR$/lib/util.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/js/commentsSystem.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/comment.room.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/index.room.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/cookie/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/cookie/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Procfile" beforeDir="false" afterPath="$PROJECT_DIR$/Procfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/bundle.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/client.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/client.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/comment-template.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/comment.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -23,9 +25,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="CSS File" />
         <option value="HTML File" />
         <option value="JavaScript File" />
-        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -50,6 +52,8 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Wittmann\WebstormProjects\discuss-app\public\js" />
+      <recent name="C:\Users\Wittmann\WebstormProjects\discuss-app\server" />
       <recent name="C:\Users\Wittmann\WebstormProjects\discuss-app\views" />
     </key>
   </component>
@@ -103,6 +107,10 @@
       <workItem from="1582470330827" duration="16037000" />
       <workItem from="1582893269363" duration="1463000" />
       <workItem from="1582969295251" duration="1572000" />
+      <workItem from="1583510237877" duration="20154000" />
+      <workItem from="1583610637001" duration="6680000" />
+      <workItem from="1583818093711" duration="3985000" />
+      <workItem from="1583858986967" duration="679000" />
     </task>
     <task id="LOCAL-00001" summary="Debugging">
       <created>1581283344665</created>

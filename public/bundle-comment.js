@@ -9213,32 +9213,29 @@ module.exports = yeast;
 
 },{}],53:[function(require,module,exports){
 const io = require('socket.io-client');
-const { CommentsSystem } = require('./js/commentsSystem');
-const UserError = require('./js/userError');
+const { CommentPage } = require('./js/commentsSystem');
 
 document.addEventListener('DOMContentLoaded', () => {
-    const socket = io('/index');
-	const errorOutput = new UserError(document.querySelector('main')).init();
-    const wrapper = document.getElementById('commentWrapper');
-    let commentSystem;
+    const commentId = parseInt(new URL(window.location.href).searchParams.get('id'));
+    if (commentId) {
+        const socket = io('/comment-' + commentId);
+        const wrapper = document.getElementById('commentPage');
+        let commentPage;
 
-    socket.on('session start', function (data) {
-        commentSystem = new CommentsSystem(wrapper, socket, data);
-    });
+        socket.on('session start', function (data) {
+            commentPage = new CommentPage(wrapper, socket, data);
+        });
 
-    socket.on('comment', function (comments) {
-        commentSystem.addComment(comments);
-    });
+        socket.on('comment', function (comments) {
+            commentPage.initComment(comments[0]);
+        });
 
-    socket.on('deleteComment', function (comments) {
-        commentSystem.deleteComment(comments);
-    });
-
-    socket.on('err', () => {
-		errorOutput.show('SOMTHING WENT WRONG');
-	});
+        socket.on('error', () => {
+            document.write('SOMETHING WENT WRONG')
+        })
+    }
 });
-},{"./js/commentsSystem":54,"./js/userError":55,"socket.io-client":37}],54:[function(require,module,exports){
+},{"./js/commentsSystem":54,"socket.io-client":37}],54:[function(require,module,exports){
 const util = require('../../lib/util');
 const constants = require('../../lib/constants');
 
@@ -9459,41 +9456,4 @@ module.exports = {
     CommentsSystem,
     CommentPage
 };
-},{"../../lib/constants":6,"../../lib/util":7}],55:[function(require,module,exports){
-class UserError {
-	constructor(wrapper) {
-		this.wrapper = wrapper;
-		this.timer = null;
-		
-		this.entity = document.createElement('div');
-		this.message = document.createElement('p');
-		this.closeButton = document.createElement('span');
-		
-		this.entity.className = 'error-message';
-		this.closeButton.className = 'close-button';
-		this.closeButton.innerText = 'X';
-	}
-	
-	init() {
-		this.closeButton.addEventListener('click', this.close.bind(this));
-		return this;
-	}
-	
-	close() {
-		this.entity.parentElement.removeChild(this.entity);
-		clearTimeout(this.timer);
-	}
-	
-	show(text) {
-		this.entity.appendChild(this.message);
-		this.entity.appendChild(this.closeButton);
-		this.wrapper.appendChild(this.entity);
-
-		this.message.innerText = text;
-		clearTimeout(this.timer);
-		this.timer = setTimeout(this.close.bind(this), 1000 * 10)
-	}
-}
-
-module.exports = UserError;
-},{}]},{},[53]);
+},{"../../lib/constants":6,"../../lib/util":7}]},{},[53]);

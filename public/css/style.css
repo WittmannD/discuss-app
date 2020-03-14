@@ -1,3 +1,12 @@
+* {
+    margin: unset;
+    padding: unset;
+    color: unset;
+    background: unset;
+    border: unset;
+    box-sizing: border-box;
+}
+
 html {
     font-family: 'Roboto', sans-serif;
     color: #141614;
@@ -7,21 +16,34 @@ a {
     color: inherit;
 }
 
-#commentWrapper div.comment, #commentWrapper div.comment-content {
+main {
+    min-height: 100vh;
+    padding: 20px 0;
+    background: url('../img/bg.png');
+}
+
+#commentForm,
+#commentWrapper,
+#commentPage {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+div.comment, 
+div.comment-content {
     padding-left: 30px;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: inset 1px 0 0 rgba(255,255,255,0.2);
 }
 
-.comment {
-    /* margin: 30px 0; */
-    background: rgba(0,0,0,0.04);
+div.comment-content {
+    padding-right: 30px;
 }
 
 .comment-form {
-    background: #e6f5f4;
-    border: 1px solid #b4c1c0;
-    padding: 5px;
+    background: rgba(0,0,0,0.08);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 5px 35px;
 }
 
 .comment-form > div[contenteditable] {
@@ -33,8 +55,34 @@ a {
     font-size: 14px;
 }
 
+.comment-form > div[contenteditable="false"] {
+    background: #e9e9e9;
+}
+
 .comment-form .form-author {
-    width: 200px;
+    width: 220px;
+}
+
+.comment-form .form-message {
+    min-width: 400px;
+}
+
+.comment-form button {
+    padding: 2px 5px;
+    border: 1px solid #b7b7b7;
+    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+    background: #f9f9f9;
+    color: rgb(50, 50, 50);
+    border-radius: 3px
+}
+
+.comment {
+    /* margin: 30px 0; */
+    background: rgba(0,0,0,0.04);
+}
+
+.comment p {
+    margin: 14px 0;
 }
 
 .comment-content {
@@ -48,6 +96,7 @@ a {
     display: flex;
     flex-direction: row;
     font-size: 0.95em;
+    /* text-align: right; */
 }
 
 .comment-content .comment-header .author {
@@ -59,9 +108,26 @@ a {
     color: #525252;
 }
 
+.comment-content .comment-header .link-set {
+    margin-left: auto;
+}
+
+.comment-content .comment-header .link-set a {
+    margin: 5px;
+}
+
+.comment-content .comment-header .link-set a.comment-anchor {
+    color: #525252;
+}
+
 .comment-content .comment-footer {
     font-size: 0.95em;
     color: #292a29;
+}
+
+.comment a.delete,
+.comment a.edit {
+    color: maroon;
 }
 
 .comment-content:before {
@@ -74,4 +140,25 @@ a {
     width: 16px;
     height: 1px;
     box-shadow: 0 -1px 0 rgba(255,255,255,0.2);
+}
+
+.error-message {
+    background: rgba(128, 0, 0, 0.3);
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    top: 0;
+    width: 100%;
+    padding: 5px;
+}
+
+.error-message p {
+    font-size: 0.95em;
+}
+
+.error-message span.close-button {
+    font-family: 'Consolas', monospace;
+    padding: 0 20px;
+    font-size: 0.95em;
+    cursor: pointer;
 }
