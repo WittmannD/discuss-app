@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Fenix&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 * {
     margin: unset;
@@ -10,7 +10,7 @@
 }
 
 html {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto","Open Sans", Helvetica, Arial, sans-serif;
     color: #171717;
 }
 
@@ -49,7 +49,7 @@ body::after {
 }
 
 .header-content h1.title {
-    font-size: 2em;
+    font-size: 32px;
     font-family: serif;
     font-weight: normal;
     color: gainsboro;
@@ -65,7 +65,7 @@ body::after {
     color: gainsboro;
     background: #545454;
     padding: 2px 5px;
-    font-size: 0.9em;
+    font-size: 14px;
 }
 
 .header-content .info span {
@@ -134,7 +134,9 @@ div.comment-content {
     box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
     background: #f9f9f9;
     color: rgb(50, 50, 50);
-    border-radius: 3px
+    border-radius: 3px;
+    margin-right: 5px;
+    font-size: 14px;
 }
 
 .comment {
@@ -157,7 +159,7 @@ div.comment-content {
     align-items: baseline;
     display: flex;
     flex-direction: row;
-    font-size: 0.95em;
+    font-size: 13px;
     /* text-align: right; */
 }
 
@@ -189,8 +191,8 @@ div.comment-content {
 }
 
 .comment-content .comment-footer {
-    font-size: 0.95em;
-    color: #292a29;
+    font-size: 14px;
+    color: maroon;
 }
 
 .comment a.delete,
