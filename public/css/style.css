@@ -44,6 +44,7 @@ body::after {
 .header-content {
     height: 80px;
     display: flex;
+    /* flex-direction: column; */
     align-items: center;
     justify-content: space-between;
 }
@@ -124,7 +125,7 @@ div.comment-content {
 }
 
 .comment-form .form-message {
-    min-width: 400px;
+    min-width: 200px;
     /*white-space: pre-line;*/
 }
 
@@ -246,6 +247,15 @@ footer p {
     color: gainsboro;
     padding: 2px 5px;
     font-size: 0.9em;
+}
+
+@media screen and (max-width: 600px) {
+  div.headaer-content {
+    flex-direction: column;
+  }
+  div.comment-content {
+    padding-left: 5px !important;
+  }
 }
 
 @keyframes show {
