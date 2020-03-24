@@ -1,6 +1,8 @@
 const util = require('../../lib/util');
 const constants = require('../../lib/constants');
 
+const CommentForm = require('./commentForm');
+
 class Comment {
     constructor(commentData, clientId, singleComment=false) {
         this.commentId = commentData.comment_id;
@@ -9,7 +11,9 @@ class Comment {
         this.author = commentData.author;
         this.message = commentData.message;
         this.owner = commentData.owner;
-		this.editable = clientId === commentData.owner && util.deltatime(commentData.created_at) <= constants.TIME_FOR_EDITING;
+		
+		this.isCurrentUserComent = clientId === commentData.owner;
+		this.isMutable = this.isCurrentUserComent && util.deltatime(commentData.created_at) <= constants.TIME_FOR_EDITING;
         this.childes = [];
 		
         const entry = `
@@ -19,7 +23,7 @@ class Comment {
                     <span class="created-at">${util.getTimeDifference(this.createdAt)}</span>
 					<div class="link-set">
 						${
-							this.editable && !singleComment ? 
+							this.isMutable && !singleComment ? 
 								'<a href="/comment?id=' + this.commentId + '" class="edit">edit</a>' +
 								'<a href="#" class="delete">delete</a>' 
 							: ''
@@ -27,7 +31,7 @@ class Comment {
 						<a href="#${this.commentId}" class="comment-anchor">#${this.commentId}</a>
 					</div>
                 </div>
-                <p class="message">${this.message}</p>
+                <div class="message">${this.message}</div>
                 <div class="comment-footer">
                     ${
                         !singleComment ?
@@ -49,85 +53,6 @@ class Comment {
     }
 }
 
-class CommentForm {
-    constructor(mode, socket, comment={}) {
-        this.mode = mode;
-        this.socket = socket;
-        this.comment = comment;
-        this.parentId = comment.commentId;
-
-        this.form = document.createElement('form');
-        this.form.className = 'comment-form';
-        this.form.innerHTML = `
-            ${
-                mode !== 'editing' ? 
-                    '<div contenteditable="true" class="form-author"></div>' 
-                : '<div contenteditable="false" class="form-author">' + comment.author + '</div>'
-            }
-            <div contenteditable="true" class="form-message">${ this.mode === 'editing' ? comment.message : ''}</div>
-            <button class="form-submit">Send</button> 
-            ${mode !== 'creating' ? '<button class="form-reset">Cancel</button>' : ''}
-       `;
-    }
-
-    getFormData() {
-        return ({
-            parent_id: this.mode === 'replying' ? this.parentId : 0,
-            author: this.form.querySelector('.form-author').textContent,
-            message: this.form.querySelector('.form-message').textContent
-        })
-    }
-
-    remove() {
-        this.form.parentNode && this.form.parentNode.removeChild(this.form);
-    }
-
-    clear() {
-        this.form.querySelector('.form-message').textContent = '';
-    }
-
-    init(wrapper) {
-        this.form.querySelector('.form-submit').addEventListener('click', (e) => {
-            e.preventDefault();
-            switch (this.mode) {
-                case 'creating':
-                    this.socket.emit('record', this.getFormData());
-                    this.clear();
-                    break;
-
-                case 'replying':
-                    this.socket.emit('record', this.getFormData());
-                    this.remove();
-                    break;
-
-                case 'editing':
-                    this.socket.emit('updateRecord', this.getFormData());
-                    history.back();
-                    break;
-            }
-        });
-
-        const resetButton = this.form.querySelector('.form-reset');
-        resetButton && resetButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            switch (this.mode) {
-                case 'replying':
-                    this.remove();
-                    break;
-
-                case 'editing':
-                    history.back();
-                    break;
-            }
-        });
-
-        wrapper.insertBefore(this.form, wrapper.children[1]);
-        this.form.querySelector('.form-message').focus();
-
-        return this;
-    }
-}
-
 class CommentPage {
     constructor(element, socket, data) {
         this.wrapper = element;
@@ -139,10 +64,21 @@ class CommentPage {
     }
 
     initComment(commentData) {
+        if (typeof commentData === 'undefined' || commentData === null)
+            return
+        
         this.comment = new Comment(commentData, this.data.clientId, true);
         this.wrapper.appendChild(this.comment.entity);
-		if (this.comment.editable)
-			this.form = new CommentForm('editing', this.socket, this.comment).init(this.wrapper);
+		if (this.comment.isMutable)
+			this.form = new CommentForm(
+                'editing',
+                this.socket,
+                this.comment,
+                {
+                    author: this.comment.author,
+                    message: this.comment.message,
+                }
+            ).init(this.wrapper);
     }
 }
 
@@ -155,6 +91,7 @@ class CommentsSystem {
         this.comments = new Map();
         this.commentForm = new CommentForm('creating', socket).init(document.querySelector('#commentForm'));
         this.replyForm = null;
+        this.commentsCount = this.comments.size;
     }
 
     addComment(comments) {
@@ -172,13 +109,14 @@ class CommentsSystem {
             }
 
             this.comments.set(commentData.comment_id, comment);
+            this.commentsCount++;
 
             comment.entity.querySelector('a.reply').addEventListener('click', (e) => {
                 e.preventDefault();
                 this.replyClickHandler(commentData.comment_id);
             });
 
-            if (this.data.clientId === commentData.owner) {
+            if (comment.isMutable) {
 
                 comment.entity.querySelector('a.delete').addEventListener('click', (e) => {
                     e.preventDefault();
@@ -186,7 +124,7 @@ class CommentsSystem {
                 });
 
             }
-        })
+        });
     }
 
     deleteComment(comments) {
@@ -194,7 +132,8 @@ class CommentsSystem {
         comments.forEach(({comment_id}) => {
             this.comments.get(comment_id).remove();
             this.comments.delete(comment_id);
-        })
+            this.commentsCount--;
+        });
     }
 
     replyClickHandler(commentId) {
@@ -203,10 +142,6 @@ class CommentsSystem {
             this.replyForm.remove();
         }
         this.replyForm = new CommentForm('replying', this.socket, comment).init(comment.entity);
-    }
-
-    editClickHandler(commentId) {
-
     }
 
     deleteClickHandler(commentId) {

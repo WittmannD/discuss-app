@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Fenix&display=swap');
+
 * {
     margin: unset;
     padding: unset;
@@ -9,17 +11,71 @@
 
 html {
     font-family: 'Roboto', sans-serif;
-    color: #141614;
+    color: #171717;
 }
 
 a {
     color: inherit;
 }
 
+body {    
+    background: url('../img/bg.png') gainsboro;
+    position: relative;
+}
+
+body::after {
+    content: "";
+    background: url(../img/header-pattern.png) fixed;
+    opacity: 0.5;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+}
+
+.header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.header-content {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-content h1.title {
+    font-size: 2em;
+    font-family: serif;
+    font-weight: normal;
+    color: gainsboro;
+    background: #545454;
+    padding: 2px 15px;
+}
+
+.header-content h1.title a {
+    text-decoration: none;
+}
+
+.header-content .info {
+    color: gainsboro;
+    background: #545454;
+    padding: 2px 5px;
+    font-size: 0.9em;
+}
+
+.header-content .info span {
+    margin: 5px;
+}
+
 main {
     min-height: 100vh;
     padding: 20px 0;
-    background: url('../img/bg.png');
+    background: url('../img/bg.png') gainsboro;
 }
 
 #commentForm,
@@ -55,6 +111,10 @@ div.comment-content {
     font-size: 14px;
 }
 
+.comment-form > div[contenteditable].invalid {
+    outline-color: maroon;
+}
+
 .comment-form > div[contenteditable="false"] {
     background: #e9e9e9;
 }
@@ -65,6 +125,7 @@ div.comment-content {
 
 .comment-form .form-message {
     min-width: 400px;
+    /*white-space: pre-line;*/
 }
 
 .comment-form button {
@@ -89,6 +150,7 @@ div.comment-content {
     font-size: 14px;
     padding: 20px 0;
     position: relative;
+    animation: show 0.4s ease;
 }
 
 .comment-content .comment-header {
@@ -118,6 +180,12 @@ div.comment-content {
 
 .comment-content .comment-header .link-set a.comment-anchor {
     color: #525252;
+}
+
+.comment-content .message {
+    white-space: pre-line;
+    margin: 14px 0;
+    overflow-wrap: break-word;
 }
 
 .comment-content .comment-footer {
@@ -153,7 +221,8 @@ div.comment-content {
 }
 
 .error-message p {
-    font-size: 0.95em;
+    font-family: 'Consolas', monospace;
+    font-size: 1.5em;
 }
 
 .error-message span.close-button {
@@ -161,4 +230,27 @@ div.comment-content {
     padding: 0 20px;
     font-size: 0.95em;
     cursor: pointer;
+}
+
+footer {
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+footer p {
+    background: #545454;
+    color: gainsboro;
+    padding: 2px 5px;
+    font-size: 0.9em;
+}
+
+@keyframes show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }

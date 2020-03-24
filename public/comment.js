@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
             commentPage.initComment(comments[0]);
         });
 
-        socket.on('error', () => {
-            document.write('SOMETHING WENT WRONG')
+        socket.on('err', (err) => {
+            document.write(err)
         })
     }
 });

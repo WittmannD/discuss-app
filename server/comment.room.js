@@ -1,5 +1,7 @@
 const cookie = require("cookie");
+
 const requests = require("./requests");
+const constants = require("../lib/constants.js")
 
 module.exports = function(socket) {
     const cookies = cookie.parse(socket.handshake.headers.cookie);
@@ -9,22 +11,28 @@ module.exports = function(socket) {
 
     socket.emit('session start', data);
 
-    requests.getById(commentId, data.clientId, function (result) {
+    requests.getById(commentId, data.clientId, function (result, err) {
         if (result) {
             socket.emit('comment', result);
 			
         } else {
-            socket.emit('error');
+            socket.emit('err', err);
         }
     });
 
     socket.on('updateRecord', function (recordData) {
-        requests.updateRecord(recordData, commentId, data.clientId, function (result) {
-            if (result) {
-                io.to('/').emit('comment', result);
-            } else {
-                socket.emit('error');
-            }
-        })
+        if (
+            recordData.message === '' ||
+            recordData.message.match(constants.MESSAGE_PATTERN) === null
+        ) { socket.emit('err', 'Input correct comment data!'); }
+        else {
+            requests.updateRecord(recordData, commentId, data.clientId, function (result, err) {
+                if (result) {
+                    io.to('/').emit('comment', result);
+                } else {
+                    socket.emit('err', err);
+                }
+            })
+        }
     });
 };
