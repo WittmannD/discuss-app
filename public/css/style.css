@@ -249,6 +249,10 @@ footer p {
 @media screen and (max-width: 600px) {
   div.header-content {
     flex-direction: column;
+    height: auto;
+  }
+  div.header-content .title {
+    font-size: 28px;
   }
 }
 
