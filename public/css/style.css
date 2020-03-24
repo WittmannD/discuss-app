@@ -39,12 +39,9 @@ body::after {
     max-width: 1000px;
     margin: 0 auto;
     padding: 0 40px;
-}
-
-.header-content {
     height: 80px;
     display: flex;
-    /* flex-direction: column; */
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
 }
@@ -250,10 +247,13 @@ footer p {
 }
 
 @media screen and (max-width: 600px) {
-  div.headaer-content {
+  div.header-content {
     flex-direction: column;
   }
-  div.comment-content {
+}
+
+@media screen and (max-width: 600px) {
+  div.comment {
     padding-left: 5px !important;
   }
 }
