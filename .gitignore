@@ -1,0 +1,6 @@
+.env
+run.bat
+
+/node_modules/
+/dist
+/.idea

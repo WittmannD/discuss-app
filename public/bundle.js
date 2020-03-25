@@ -2231,10 +2231,16 @@ process.umask = function() { return 0; };
 
 },{}],6:[function(require,module,exports){
 const constants = {
-	TIME_FOR_EDITING: 1000 * 60 * 5, // ms
+    TIME_FOR_EDITING: 1000 * 60 * 30, // ms
     
+    CREATING_FORM_MODE: 'creating',
+    UPDATING_FORM_MODE: 'editing',
+    REPLYING_FORM_MODE: 'replying',
+    
+    USERNAME_MAX_LENGTH: 14,
+    MESSAGE_MAX_LENGTH: 300,
     USERNAME_PATTERN: /^[A-ZА-Я0-9]([A-ZА-Я0-9]|[-_](?![-_])){2,13}[A-ZА-Я0-9]$/i,
-    MESSAGE_PATTERN: /^[\s\S]{1,200}$/i,
+    MESSAGE_PATTERN: /^[\s\S]{1,300}$/i,
 
     SPECIAL_KEYS: {
       'backspace': 8,
@@ -2248,7 +2254,9 @@ const constants = {
       'upArrow': 38,
       'rightArrow': 39,
       'downArrow': 40,
-    }
+    },
+    
+    COMMENTS_UPLOADING_SIZE: 10
 };
 
 module.exports = constants; 
@@ -2284,11 +2292,18 @@ function getUniqueId(length) {
     return new Array(length).fill(0).map(t => { return getRandomInt(255).toString(16) }).join('');
 }
 
+function encodeString(string) {
+    return string.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+       return '&#'+i.charCodeAt(0)+';';
+    });
+}
+
 module.exports = {
 	deltatime,
     getTimeDifference,
     getRandomInt,
-    getUniqueId
+    getUniqueId,
+    encodeString
 };
 },{}],8:[function(require,module,exports){
 module.exports = after
@@ -9235,12 +9250,13 @@ const UserError = require('./js/userError');
 
 document.addEventListener('DOMContentLoaded', () => {
     const socket = io('/index');
+    
 	const errorOutput = new UserError(document.querySelector('main')).init();
     const wrapper = document.getElementById('commentWrapper');
     
     const commentsCounter = {
         element: document.getElementById('commentsCount'),
-        update: function () { this.element.innerText = `${commentSystem.commentsCount} comments`; }
+        update: function (commentsCount) { this.element.innerText = `${commentsCount} comments`; }
     };
     const clientsCounter = {
         element: document.getElementById('usersCount'),
@@ -9249,21 +9265,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let commentSystem;
     
-    socket.on('session start', function (data, clientsCount) {
+    socket.on('session start', function (data, clientsCount, commentsCount) {
         commentSystem = new CommentsSystem(wrapper, socket, data);
+        commentSystem.getComments();
+        console.log(commentsCount);
         clientsCounter.update(clientsCount);
+        commentsCount && commentsCounter.update(commentsCount);
     });
 
-    socket.on('comment', function (comments) {
-        commentSystem.addComment(comments);
-        if (commentSystem.commentsCount)
-            commentsCounter.update();
+    socket.on('comment', function (comments, isNew) {
+        commentSystem.addComment(comments, isNew);
+            
     });
 
     socket.on('deleteComment', function (comments) {
         commentSystem.deleteComment(comments);
-        if (commentSystem.commentsCount)
-            commentsCounter.update();
     });
 
     socket.on('err', (err) => {
@@ -9281,7 +9297,7 @@ class CommentForm {
         this.parentId = comment.commentId;
         
 		this.authorForm = ContentEditable.create(
-            14, 
+            constants.USERNAME_MAX_LENGTH, 
             constants.USERNAME_PATTERN, 
             {
                 'class': 'form-author',
@@ -9291,7 +9307,7 @@ class CommentForm {
             placeholder.author
         );
 		this.messageForm = ContentEditable.create(
-            200, 
+            constants.MESSAGE_MAX_LENGTH, 
             constants.MESSAGE_PATTERN, 
             {
                 'class': 'form-message',
@@ -9304,13 +9320,13 @@ class CommentForm {
 		this.submitButton = document.createElement('button');
 		this.submitButton.classList.add('form-submit');
 		this.submitButton.innerText = 'Send';
-		if (mode !== 'creating') {
+		if (mode !== constants.CREATING_FORM_MODE) {
 			this.cancelButton = document.createElement('button');
 			this.cancelButton.classList.add('form-reset');
 			this.cancelButton.innerText = 'Cancel';
 		}
 		
-		if (mode === 'editing') this.authorForm.disable();
+		if (mode === constants.UPDATING_FORM_MODE) this.authorForm.disable();
 		
         this.form = document.createElement('form');
         this.form.appendChild(this.authorForm.entity);
@@ -9322,7 +9338,7 @@ class CommentForm {
 
     getFormData() {
         return ({
-            parent_id: this.mode === 'replying' ? this.parentId : 0,
+            parent_id: this.mode === constants.REPLYING_FORM_MODE ? this.parentId : 0,
             author: this.authorForm.entity.textContent.trim(),
             message: this.messageForm.entity.textContent.trim()
         })
@@ -9341,17 +9357,17 @@ class CommentForm {
             e.preventDefault();
             
             switch (this.mode) {
-                case 'creating':
+                case constants.CREATING_FORM_MODE:
                     this.socket.emit('record', this.getFormData());
                     this.clear();
                     break;
 
-                case 'replying':
+                case constants.REPLYING_FORM_MODE:
                     this.socket.emit('record', this.getFormData());
                     this.remove();
                     break;
 
-                case 'editing':
+                case constants.UPDATING_FORM_MODE:
                     this.socket.emit('updateRecord', this.getFormData());
                     history.back();
                     break;
@@ -9361,11 +9377,11 @@ class CommentForm {
         this.cancelButton && this.cancelButton.addEventListener('click', (e) => {
             e.preventDefault();
             switch (this.mode) {
-                case 'replying':
+                case constants.REPLYING_FORM_MODE:
                     this.remove();
                     break;
 
-                case 'editing':
+                case constants.UPDATING_FORM_MODE:
                     window.location.href = `${window.location.origin}/#${this.comment.commentId}`
                     break;
             }
@@ -9483,7 +9499,7 @@ class Comment {
 						<a href="#${this.commentId}" class="comment-anchor">#${this.commentId}</a>
 					</div>
                 </div>
-                <div class="message">${this.message}</div>
+                <div class="message">${util.encodeString(this.message)}</div>
                 <div class="comment-footer">
                     ${
                         !singleComment ?
@@ -9536,6 +9552,11 @@ class CommentPage {
 
 class CommentsSystem {
     constructor(element, socket, data) {
+        if (CommentsSystem._instance) {
+            return this._instance;
+        }
+        CommentsSystem._instance = this;
+    
         this.wrapper = element;
         this.socket = socket;
         this.data = data;
@@ -9543,10 +9564,36 @@ class CommentsSystem {
         this.comments = new Map();
         this.commentForm = new CommentForm('creating', socket).init(document.querySelector('#commentForm'));
         this.replyForm = null;
-        this.commentsCount = this.comments.size;
+        
+        this.firstLevelCommentsCount = 0;
+        this.commentsPortionSize = constants.COMMENTS_UPLOADING_SIZE;
+    }
+    
+    get commentsCount() {
+        return this.comments.size;
+    }
+    
+    showMoreButton() {
+        const showMore = document.createElement('div');
+        showMore.classList.add('show-comments');
+        showMore.innerHTML = '<p>show more</p>';
+        this.wrapper.appendChild(showMore);
+        
+        showMore.addEventListener('click', () => {
+            this.getComments();
+            this.wrapper.removeChild(showMore);
+        });
+        
+        return showMore;
+    }
+    
+    getComments() {
+        const start = this.firstLevelCommentsCount;
+        const count = this.commentsPortionSize;
+        this.socket.emit('getRecords', start, count);
     }
 
-    addComment(comments) {
+    addComment(comments, newer=false) {
         console.log(comments);
         comments.forEach(commentData => {
             const comment = new Comment(commentData, this.data.clientId, false);
@@ -9557,11 +9604,15 @@ class CommentsSystem {
                 parent.childes.push(commentData.comment_id);
 
             } else {
-                this.wrapper.insertBefore(comment.entity, this.wrapper.children[0]);
+                if (!newer) {
+                    this.wrapper.appendChild(comment.entity);
+                } else {
+                    this.wrapper.insertBefore(comment.entity, this.wrapper.children[0]);
+                }
+                this.firstLevelCommentsCount++;
             }
 
             this.comments.set(commentData.comment_id, comment);
-            this.commentsCount++;
 
             comment.entity.querySelector('a.reply').addEventListener('click', (e) => {
                 e.preventDefault();
@@ -9576,15 +9627,22 @@ class CommentsSystem {
                 });
 
             }
+            
         });
+        
+        this.showMoreButton();
     }
 
     deleteComment(comments) {
         console.log(comments);
-        comments.forEach(({comment_id}) => {
-            this.comments.get(comment_id).remove();
-            this.comments.delete(comment_id);
-            this.commentsCount--;
+        comments.forEach(({comment_id, parent_id}) => {
+            const comment = this.comments.get(comment_id);
+            
+            if (comment) {
+                comment.remove();
+                this.comments.delete(comment_id);
+                if (parent_id === 0 || parent_id === null) this.firstLevelCommentsCount--;
+            }
         });
     }
 

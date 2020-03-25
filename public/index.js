@@ -4,12 +4,13 @@ const UserError = require('./js/userError');
 
 document.addEventListener('DOMContentLoaded', () => {
     const socket = io('/index');
+    
 	const errorOutput = new UserError(document.querySelector('main')).init();
     const wrapper = document.getElementById('commentWrapper');
     
     const commentsCounter = {
         element: document.getElementById('commentsCount'),
-        update: function () { this.element.innerText = `${commentSystem.commentsCount} comments`; }
+        update: function (commentsCount) { this.element.innerText = `${commentsCount} comments`; }
     };
     const clientsCounter = {
         element: document.getElementById('usersCount'),
@@ -18,21 +19,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let commentSystem;
     
-    socket.on('session start', function (data, clientsCount) {
+    socket.on('session start', function (data, clientsCount, commentsCount) {
         commentSystem = new CommentsSystem(wrapper, socket, data);
+        commentSystem.getComments();
+        console.log(commentsCount);
         clientsCounter.update(clientsCount);
+        commentsCount && commentsCounter.update(commentsCount);
     });
 
-    socket.on('comment', function (comments) {
-        commentSystem.addComment(comments);
-        if (commentSystem.commentsCount)
-            commentsCounter.update();
+    socket.on('comment', function (comments, isNew) {
+        commentSystem.addComment(comments, isNew);
+            
     });
 
     socket.on('deleteComment', function (comments) {
         commentSystem.deleteComment(comments);
-        if (commentSystem.commentsCount)
-            commentsCounter.update();
     });
 
     socket.on('err', (err) => {

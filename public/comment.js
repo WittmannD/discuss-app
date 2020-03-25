@@ -6,11 +6,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (commentId) {
         const socket = io('/comment-' + commentId);
         const wrapper = document.getElementById('commentPage');
+        
+        const commentsCounter = {
+            element: document.getElementById('commentsCount'),
+            update: function (commentsCount) { this.element.innerText = `${commentsCount} comments`; }
+        };
+        const clientsCounter = {
+            element: document.getElementById('usersCount'),
+            update: function (clientsCount) { this.element.innerText = `${clientsCount} online`; }
+        };
+        
         let commentPage;
 
-        socket.on('session start', function (data) {
+        socket.on('session start', function (data, clientsCount, commentsCount) {
             commentPage = new CommentPage(wrapper, socket, data);
+            
+            clientsCounter.update(clientsCount);
+            commentsCount && commentsCounter.update(commentsCount);
         });
+        
+        socket.emit('getRecord', commentId);
 
         socket.on('comment', function (comments) {
             commentPage.initComment(comments[0]);

@@ -1,21 +1,24 @@
-const cookie = require("cookie");
+const cookie = require('cookie');
 
 const requests = require("./requests");
 const constants = require("../lib/constants.js")
 
-module.exports = function(socket) {
+module.exports = function(io, socket) {
     const cookies = cookie.parse(socket.handshake.headers.cookie || '');
     const data = JSON.parse(Buffer.from(cookies["commentSystemClient"], 'base64').toString());
-    const io = this;
     
-    socket.emit('session start', data, io.engine.clientsCount);
-	
-    requests.getAll(function (result, err) {
-        if (result) {
-            socket.emit('comment', result);
-        } else {
-            socket.emit('err', err);
-        }
+    requests.getCount(function (result) {
+        socket.emit('session start', data, io.engine.clientsCount, result[0].count);
+    });
+    
+    socket.on('getRecords', function(start, count) {
+        requests.getRecords(start, count, function (result, err) {
+            if (result) {
+                socket.emit('comment', result, false);
+            } else {
+                socket.emit('err', err);
+            }
+        })
     });
     
     socket.on('record', function (recordData) {
@@ -28,7 +31,7 @@ module.exports = function(socket) {
         else {
             requests.addRecord(recordData, data.clientId, function (result, err) {
                 if (result) {
-                    io.of(socket.nsp.name).emit('comment', result);
+                    io.of(socket.nsp.name).emit('comment', result, true);
                 } else {
                     socket.emit('err', err);
                 }

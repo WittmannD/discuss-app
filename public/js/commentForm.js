@@ -8,7 +8,7 @@ class CommentForm {
         this.parentId = comment.commentId;
         
 		this.authorForm = ContentEditable.create(
-            14, 
+            constants.USERNAME_MAX_LENGTH, 
             constants.USERNAME_PATTERN, 
             {
                 'class': 'form-author',
@@ -18,7 +18,7 @@ class CommentForm {
             placeholder.author
         );
 		this.messageForm = ContentEditable.create(
-            200, 
+            constants.MESSAGE_MAX_LENGTH, 
             constants.MESSAGE_PATTERN, 
             {
                 'class': 'form-message',
@@ -31,13 +31,13 @@ class CommentForm {
 		this.submitButton = document.createElement('button');
 		this.submitButton.classList.add('form-submit');
 		this.submitButton.innerText = 'Send';
-		if (mode !== 'creating') {
+		if (mode !== constants.CREATING_FORM_MODE) {
 			this.cancelButton = document.createElement('button');
 			this.cancelButton.classList.add('form-reset');
 			this.cancelButton.innerText = 'Cancel';
 		}
 		
-		if (mode === 'editing') this.authorForm.disable();
+		if (mode === constants.UPDATING_FORM_MODE) this.authorForm.disable();
 		
         this.form = document.createElement('form');
         this.form.appendChild(this.authorForm.entity);
@@ -49,7 +49,7 @@ class CommentForm {
 
     getFormData() {
         return ({
-            parent_id: this.mode === 'replying' ? this.parentId : 0,
+            parent_id: this.mode === constants.REPLYING_FORM_MODE ? this.parentId : 0,
             author: this.authorForm.entity.textContent.trim(),
             message: this.messageForm.entity.textContent.trim()
         })
@@ -68,17 +68,17 @@ class CommentForm {
             e.preventDefault();
             
             switch (this.mode) {
-                case 'creating':
+                case constants.CREATING_FORM_MODE:
                     this.socket.emit('record', this.getFormData());
                     this.clear();
                     break;
 
-                case 'replying':
+                case constants.REPLYING_FORM_MODE:
                     this.socket.emit('record', this.getFormData());
                     this.remove();
                     break;
 
-                case 'editing':
+                case constants.UPDATING_FORM_MODE:
                     this.socket.emit('updateRecord', this.getFormData());
                     history.back();
                     break;
@@ -88,11 +88,11 @@ class CommentForm {
         this.cancelButton && this.cancelButton.addEventListener('click', (e) => {
             e.preventDefault();
             switch (this.mode) {
-                case 'replying':
+                case constants.REPLYING_FORM_MODE:
                     this.remove();
                     break;
 
-                case 'editing':
+                case constants.UPDATING_FORM_MODE:
                     window.location.href = `${window.location.origin}/#${this.comment.commentId}`
                     break;
             }

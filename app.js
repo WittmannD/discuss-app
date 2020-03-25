@@ -4,9 +4,9 @@ const http = require('http');
 const socket = require('socket.io');
 const path = require('path');
 
-const util = require(path.join(__dirname, '/lib/util'));
 const indexRoom = require('./server/index.room');
 const commentRoom = require('./server/comment.room');
+const util = require(path.join(__dirname, '/lib/util'));
 
 const app = express();
 const server = http.createServer(app);
@@ -20,7 +20,7 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 
 app.use(cookieSession({
     name: 'commentSystemClient',
-    secret: process.env.SECRET || 'ax87gZbDu6g3d86gPOob38d86g7wEEg',
+    secret: process.env.SECRET,
     maxAge: 24 * 3 * 60 * 60 * 1000
 }));
 
@@ -37,8 +37,13 @@ app.get('/comment', function (request, response) {
     response.sendFile(path.join(__dirname, 'views/comment.html'));
 });
 
-io.of('/index').on('connection', indexRoom.bind(io));
-io.of(/^\/comment-\d+$/).on('connection', commentRoom.bind(io));
+io.of('/index').on('connection', function(socket) {
+    indexRoom(io, socket);
+});
+
+io.of(/^\/comment-\d+$/).on('connection', function(socket) {
+    commentRoom(io, socket);
+});
 
 server.listen(port, function() {
     console.log('listening on *:' + port);

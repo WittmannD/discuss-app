@@ -3,21 +3,24 @@ const cookie = require("cookie");
 const requests = require("./requests");
 const constants = require("../lib/constants.js")
 
-module.exports = function(socket) {
-    const cookies = cookie.parse(socket.handshake.headers.cookie);
-    const data = JSON.parse(Buffer.from(cookies["commentSystemClient"], 'base64').toString());
+module.exports = function(io, socket) {
     const commentId = parseInt(socket.nsp.name.match(/^\/comment-(\d+)$/)[1]);
-    const io = this;
+    const cookies = cookie.parse(socket.handshake.headers.cookie || '');
+    const data = JSON.parse(Buffer.from(cookies["commentSystemClient"], 'base64').toString());
+    
+    requests.getCount(function (result) {
+        socket.emit('session start', data, io.engine.clientsCount, result[0].count);
+    });
 
-    socket.emit('session start', data);
-
-    requests.getById(commentId, data.clientId, function (result, err) {
-        if (result) {
-            socket.emit('comment', result);
-			
-        } else {
-            socket.emit('err', err);
-        }
+    socket.on('getRecord', function(commentId) {
+        requests.getById(commentId, data.clientId, function (result, err) {
+            if (result) {
+                socket.emit('comment', result);
+                
+            } else {
+                socket.emit('err', err);
+            }
+        });
     });
 
     socket.on('updateRecord', function (recordData) {

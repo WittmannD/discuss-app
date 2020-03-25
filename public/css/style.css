@@ -121,8 +121,9 @@ div.comment-content {
     width: 220px;
 }
 
-.comment-form .form-message {
+.comment-form div.form-message {
     min-width: 200px;
+    padding: 10px;
     /*white-space: pre-line;*/
 }
 
@@ -208,6 +209,22 @@ div.comment-content {
     width: 16px;
     height: 1px;
     box-shadow: 0 -1px 0 rgba(255,255,255,0.2);
+}
+
+.show-comments {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    align-items: stretch;
+    background: gainsboro;
+    margin: 10px 0;
+}
+
+.show-comments p {
+    padding: 8px 20px;
+    font-size: 14px;
+    color: #545454;
+    text-align: center;
 }
 
 .error-message {

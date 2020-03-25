@@ -31,7 +31,7 @@ class Comment {
 						<a href="#${this.commentId}" class="comment-anchor">#${this.commentId}</a>
 					</div>
                 </div>
-                <div class="message">${this.message}</div>
+                <div class="message">${util.encodeString(this.message)}</div>
                 <div class="comment-footer">
                     ${
                         !singleComment ?
@@ -84,6 +84,11 @@ class CommentPage {
 
 class CommentsSystem {
     constructor(element, socket, data) {
+        if (CommentsSystem._instance) {
+            return this._instance;
+        }
+        CommentsSystem._instance = this;
+    
         this.wrapper = element;
         this.socket = socket;
         this.data = data;
@@ -91,10 +96,36 @@ class CommentsSystem {
         this.comments = new Map();
         this.commentForm = new CommentForm('creating', socket).init(document.querySelector('#commentForm'));
         this.replyForm = null;
-        this.commentsCount = this.comments.size;
+        
+        this.firstLevelCommentsCount = 0;
+        this.commentsPortionSize = constants.COMMENTS_UPLOADING_SIZE;
+    }
+    
+    get commentsCount() {
+        return this.comments.size;
+    }
+    
+    showMoreButton() {
+        const showMore = document.createElement('div');
+        showMore.classList.add('show-comments');
+        showMore.innerHTML = '<p>show more</p>';
+        this.wrapper.appendChild(showMore);
+        
+        showMore.addEventListener('click', () => {
+            this.getComments();
+            this.wrapper.removeChild(showMore);
+        });
+        
+        return showMore;
+    }
+    
+    getComments() {
+        const start = this.firstLevelCommentsCount;
+        const count = this.commentsPortionSize;
+        this.socket.emit('getRecords', start, count);
     }
 
-    addComment(comments) {
+    addComment(comments, newer=false) {
         console.log(comments);
         comments.forEach(commentData => {
             const comment = new Comment(commentData, this.data.clientId, false);
@@ -105,11 +136,15 @@ class CommentsSystem {
                 parent.childes.push(commentData.comment_id);
 
             } else {
-                this.wrapper.insertBefore(comment.entity, this.wrapper.children[0]);
+                if (!newer) {
+                    this.wrapper.appendChild(comment.entity);
+                } else {
+                    this.wrapper.insertBefore(comment.entity, this.wrapper.children[0]);
+                }
+                this.firstLevelCommentsCount++;
             }
 
             this.comments.set(commentData.comment_id, comment);
-            this.commentsCount++;
 
             comment.entity.querySelector('a.reply').addEventListener('click', (e) => {
                 e.preventDefault();
@@ -124,15 +159,22 @@ class CommentsSystem {
                 });
 
             }
+            
         });
+        
+        this.showMoreButton();
     }
 
     deleteComment(comments) {
         console.log(comments);
-        comments.forEach(({comment_id}) => {
-            this.comments.get(comment_id).remove();
-            this.comments.delete(comment_id);
-            this.commentsCount--;
+        comments.forEach(({comment_id, parent_id}) => {
+            const comment = this.comments.get(comment_id);
+            
+            if (comment) {
+                comment.remove();
+                this.comments.delete(comment_id);
+                if (parent_id === 0 || parent_id === null) this.firstLevelCommentsCount--;
+            }
         });
     }
 
