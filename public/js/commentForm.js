@@ -7,7 +7,7 @@ class CommentForm {
         this.comment = comment;
         this.parentId = comment.commentId;
         
-		this.authorForm = ContentEditable.create(
+        this.authorForm = ContentEditable.create(
             constants.USERNAME_MAX_LENGTH, 
             constants.USERNAME_PATTERN, 
             {
@@ -17,7 +17,7 @@ class CommentForm {
             true, 
             placeholder.author
         );
-		this.messageForm = ContentEditable.create(
+        this.messageForm = ContentEditable.create(
             constants.MESSAGE_MAX_LENGTH, 
             constants.MESSAGE_PATTERN, 
             {
@@ -27,18 +27,18 @@ class CommentForm {
             false, 
             placeholder.message
         );
-		
-		this.submitButton = document.createElement('button');
-		this.submitButton.classList.add('form-submit');
-		this.submitButton.innerText = 'Send';
-		if (mode !== constants.CREATING_FORM_MODE) {
-			this.cancelButton = document.createElement('button');
-			this.cancelButton.classList.add('form-reset');
-			this.cancelButton.innerText = 'Cancel';
-		}
-		
-		if (mode === constants.UPDATING_FORM_MODE) this.authorForm.disable();
-		
+        
+        this.submitButton = document.createElement('button');
+        this.submitButton.classList.add('form-submit');
+        this.submitButton.innerText = 'Send';
+        if (mode !== constants.CREATING_FORM_MODE) {
+            this.cancelButton = document.createElement('button');
+            this.cancelButton.classList.add('form-reset');
+            this.cancelButton.innerText = 'Cancel';
+        }
+        
+        if (mode === constants.UPDATING_FORM_MODE) this.authorForm.disable();
+        
         this.form = document.createElement('form');
         this.form.appendChild(this.authorForm.entity);
         this.form.appendChild(this.messageForm.entity);

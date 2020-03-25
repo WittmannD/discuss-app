@@ -5,7 +5,7 @@ const UserError = require('./js/userError');
 document.addEventListener('DOMContentLoaded', () => {
     const socket = io('/index');
     
-	const errorOutput = new UserError(document.querySelector('main')).init();
+    const errorOutput = new UserError(document.querySelector('main')).init();
     const wrapper = document.getElementById('commentWrapper');
     
     const commentsCounter = {
@@ -37,6 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('err', (err) => {
-		errorOutput.show(err);
-	});
+        errorOutput.show(err);
+    });
 });

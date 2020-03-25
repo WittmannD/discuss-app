@@ -11,25 +11,25 @@ class Comment {
         this.author = commentData.author;
         this.message = commentData.message;
         this.owner = commentData.owner;
-		
-		this.isCurrentUserComent = clientId === commentData.owner;
-		this.isMutable = this.isCurrentUserComent && util.deltatime(commentData.created_at) <= constants.TIME_FOR_EDITING;
+        
+        this.isCurrentUserComent = clientId === commentData.owner;
+        this.isMutable = this.isCurrentUserComent && util.deltatime(commentData.created_at) <= constants.TIME_FOR_EDITING;
         this.childes = [];
-		
+        
         const entry = `
             <div class="comment-content">
                 <div class="comment-header">
                     <p class="author">${this.author}</p>
                     <span class="created-at">${util.getTimeDifference(this.createdAt)}</span>
-					<div class="link-set">
-						${
-							this.isMutable && !singleComment ? 
-								'<a href="/comment?id=' + this.commentId + '" class="edit">edit</a>' +
-								'<a href="#" class="delete">delete</a>' 
-							: ''
-						}
-						<a href="#${this.commentId}" class="comment-anchor">#${this.commentId}</a>
-					</div>
+                    <div class="link-set">
+                        ${
+                            this.isMutable && !singleComment ? 
+                                '<a href="/comment?id=' + this.commentId + '" class="edit">edit</a>' +
+                                '<a href="#" class="delete">delete</a>' 
+                            : ''
+                        }
+                        <a href="#${this.commentId}" class="comment-anchor">#${this.commentId}</a>
+                    </div>
                 </div>
                 <div class="message">${util.encodeString(this.message)}</div>
                 <div class="comment-footer">
@@ -69,8 +69,8 @@ class CommentPage {
         
         this.comment = new Comment(commentData, this.data.clientId, true);
         this.wrapper.appendChild(this.comment.entity);
-		if (this.comment.isMutable)
-			this.form = new CommentForm(
+        if (this.comment.isMutable)
+            this.form = new CommentForm(
                 'editing',
                 this.socket,
                 this.comment,
@@ -132,7 +132,7 @@ class CommentsSystem {
             const parent = commentData.parent_id ? this.comments.get(commentData.parent_id) : false;
 
             if (parent) {
-				parent.entity.insertBefore(comment.entity, parent.entity.children[1]);
+                parent.entity.insertBefore(comment.entity, parent.entity.children[1]);
                 parent.childes.push(commentData.comment_id);
 
             } else {

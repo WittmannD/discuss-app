@@ -5,7 +5,7 @@ const pool = new Pool({
 });
 
 const getRecords = function (start, count, callback) {
-	// const queryString = `
+    // const queryString = `
     //     SELECT * FROM comment_records
     //     ORDER BY created_at ASC
     //     LIMIT $1::integer OFFSET $2::integer;
@@ -26,8 +26,8 @@ const getRecords = function (start, count, callback) {
     `;
     const values = [
         parseInt(count),
-		parseInt(start)
-	]
+        parseInt(start)
+    ]
     pool.query(queryString, values, (err, res) => {
         if (err) {
             console.log(err);
@@ -44,9 +44,9 @@ const getById = function (commentId, clientId, callback) {
         SELECT * FROM comment_records
         WHERE comment_id = $1::integer;
     `;
-	const values = [
-		commentId
-	]
+    const values = [
+        commentId
+    ]
     pool.query(queryString, values, (err, res) => {       
         if (err) {
             console.log(err);
@@ -86,12 +86,12 @@ const addRecord = function (data, clientId, callback) {
         ($1::integer, $2::text, $3::text, $4::text) 
         RETURNING *;
     `;
-	const values = [
-		data.parent_id,
-		data.author,
-		data.message,
-		clientId
-	]
+    const values = [
+        data.parent_id,
+        data.author,
+        data.message,
+        clientId
+    ]
     pool.query(queryString, values, (err, res) => {
         if (err) {
             console.log(err);
@@ -108,15 +108,15 @@ const updateRecord = function (data, commentId, clientId, callback) {
         UPDATE comment_records
         SET message = $1::text
         WHERE comment_id = $2::integer
-		AND created_at <= now()
+        AND created_at <= now()
         AND owner = $3::text
         RETURNING *;
     `;
-	const values = [
-		data.message,
-		commentId,
-		clientId
-	]
+    const values = [
+        data.message,
+        commentId,
+        clientId
+    ]
     pool.query(queryString, values, (err, res) => {
         if (err) {
             console.log(err);
@@ -134,8 +134,8 @@ const deleteRecord = function (commentId, clientId, callback) {
             SELECT comment_id, parent_id
             FROM comment_records
             WHERE comment_id = $1::integer
-			AND created_at <= now()
-			AND owner = $2::text
+            AND created_at <= now()
+            AND owner = $2::text
             UNION ALL
             SELECT c.comment_id, c.parent_id
             FROM comment_records c
@@ -145,10 +145,10 @@ const deleteRecord = function (commentId, clientId, callback) {
         WHERE comment_id IN (SELECT comment_id FROM tree)
         RETURNING *;
     `;
-	const values = [
-		commentId,
-		clientId
-	]
+    const values = [
+        commentId,
+        clientId
+    ]
     pool.query(queryString, values, (err, res) => {
         if (err) {
             console.log(err);

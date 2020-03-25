@@ -38,7 +38,7 @@ module.exports = function(io, socket) {
             })
         }
     });
-	
+    
     socket.on('deleteRecord', function (commentId) {
         requests.deleteRecord(commentId, data.clientId, function (result, err) {
             if (result) {
